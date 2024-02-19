@@ -3,7 +3,6 @@ module Main where
 import System.Environment
 
 main :: IO ()
-  
 main = do
   -- Exercise 1
   {-
@@ -16,9 +15,8 @@ main = do
   args <- getArgs
   putStrLn ("Sum: " ++ show (read (args !! 0) + read (args !! 1) )  )
   -}
-  
+
   -- Exercise 3
   putStrLn "Gimme your name:"
   name <- getLine
   putStrLn ("Hello, " ++ name)
-  
