@@ -6,4 +6,4 @@ toDigits :: Integer -> [Integer]
 toDigits n = do
   if n <= 0
     then []
-    else map toInteger $ map digitToInt $ show n
+    else map (toInteger . digitToInt) $ show n
