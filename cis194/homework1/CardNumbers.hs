@@ -7,3 +7,6 @@ toDigits n = do
   if n <= 0
     then []
     else map (toInteger . digitToInt) $ show n
+
+toDigitsRev :: Integer -> [Integer]
+toDigitsRev = reverse . toDigits

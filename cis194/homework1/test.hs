@@ -10,6 +10,8 @@ runghc test.hs
 import CardNumbers
 import Test.HUnit
 
+{- Unit tests for toDigits -}
+
 testToDigits :: Test
 testToDigits =
   TestCase $
@@ -34,5 +36,18 @@ testToDigitsNegative =
       (toDigits (-17))
       []
 
+{- Unit tests for toDigitsRev -}
+
+testToDigitsRev :: Test
+testToDigitsRev =
+  TestCase $
+    assertEqual
+      "Convert integer to a reversed list of digits"
+      (toDigitsRev 1234)
+      [4, 3, 2, 1]
+
 main :: IO Counts
-main = runTestTT $ TestList [testToDigits, testToDigitsZero, testToDigitsNegative]
+main =
+  runTestTT $
+    TestList
+      [testToDigits, testToDigitsZero, testToDigitsNegative, testToDigitsRev]
