@@ -22,3 +22,11 @@ doubleEveryOther input =
         (reverse input)
         [1 ..]
     )
+
+-- Sum all digits of the numbers in the input list.
+sumDigits :: [Integer] -> Integer
+sumDigits input = sum [c | x <- map toDigits input, c <- x]
+
+-- Validate whether the card number is valid
+validate :: Integer -> Bool
+validate n = mod ((sumDigits . doubleEveryOther . toDigits) n) 10 == 0
