@@ -46,8 +46,32 @@ testToDigitsRev =
       (toDigitsRev 1234)
       [4, 3, 2, 1]
 
+{- Unit tests for doubleEveryOther -}
+
+testDoubleEveryOther :: Test
+testDoubleEveryOther =
+  TestCase $
+    assertEqual
+      "Double every other digit in an integer list"
+      (doubleEveryOther [8, 7, 6, 5])
+      [16, 7, 12, 5]
+
+testDoubleEveryOtherOddLenth :: Test
+testDoubleEveryOtherOddLenth =
+  TestCase $
+    assertEqual
+      "Double every other digit in an list of odd lenth"
+      (doubleEveryOther [1, 2, 3])
+      [1, 4, 3]
+
 main :: IO Counts
 main =
   runTestTT $
     TestList
-      [testToDigits, testToDigitsZero, testToDigitsNegative, testToDigitsRev]
+      [ testToDigits,
+        testToDigitsZero,
+        testToDigitsNegative,
+        testToDigitsRev,
+        testDoubleEveryOther,
+        testDoubleEveryOtherOddLenth
+      ]
