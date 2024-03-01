@@ -17,7 +17,8 @@ toDigitsRev = reverse . toDigits
 doubleEveryOther :: [Integer] -> [Integer]
 doubleEveryOther input =
   reverse
-    ( map
-        (\(x, i) -> if even i then 2 * x else x)
-        (zip (reverse input) [1 ..])
+    ( zipWith
+        (\x i -> if even i then 2 * x else x)
+        (reverse input)
+        [1 ..]
     )
