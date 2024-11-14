@@ -38,12 +38,11 @@ errFilter (LogMessage (Error severity) _ _)
   | otherwise = False
 errFilter _ = False
 
-onlyBigError :: [LogMessage] -> [LogMessage]
-onlyBigError list = [e | e <- list, errFilter e]
-
 getStr :: LogMessage -> String
 getStr (LogMessage _ _ msg) = msg
 getStr (Unknown msg) = msg
 
+-- Take an unsorted list of LogMessages, build a tree, get a list of error 
+-- LogMessages of severity of at least 50, sorted by timestamp.
 whatWentWrong :: [LogMessage] -> [String]
-whatWentWrong list = [getStr e | e <- list, errFilter e]
+whatWentWrong list = [getStr e | e <- inOrder (build list), errFilter e]
