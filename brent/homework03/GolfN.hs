@@ -25,3 +25,10 @@ skips'' xs =
   [ [xs !! (n * i - 1) | i <- [1 .. length xs], n * i <= length xs]
     | n <- [1 .. length xs]
   ]
+
+localMaxima :: [Integer] -> [Integer]
+localMaxima xs =
+  [ xs !! i
+    | i <- [1 .. length xs - 2],
+      xs !! (i - 1) < xs !! i && xs !! (i + 1) < xs !! i
+  ]
