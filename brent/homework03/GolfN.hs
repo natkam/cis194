@@ -14,7 +14,7 @@ getEveryNth' xs n = concat [[y] | (x, y) <- zip [1 ..] xs, mod x n == 0]
 
 skips' :: [a] -> [[a]]
 skips' xs =
-  [ concat [[y] | (x, y) <- zip [1 ..] xs, mod x n == 0]
+  [ [y | (x, y) <- zip [1 ..] xs, mod x n == 0]
     | n <- [1 .. (length xs)]
   ]
 
