@@ -39,7 +39,7 @@ localMaxima xs =
   ]
 
 histogram :: [Integer] -> String
-histogram xs = foldr1 (\c acc -> acc ++ "\n" ++ c) (getLines xs)
+histogram xs = foldr1 (\c acc -> acc ++ "\n" ++ c) (getLines xs) ++ "\n"
 
 --count' :: [Integer] -> [(Integer, Int)]
 --count' xs = zip ((sort . nub) xs) (map length ((group . sort) xs))
@@ -64,4 +64,9 @@ maxCount :: [Integer] -> Int
 maxCount xs = maximum (map length ((group . sort) xs))
 
 getCols :: [Integer] -> [String]
-getCols xs = [replicate (snd pair) char ++ replicate (maxCount xs - snd pair) ' ' | pair <- count xs, char <- if snd pair == 0 then " " else "*"]
+getCols xs =
+  [ replicate (snd pair) char
+      ++ replicate (maxCount xs - snd pair) ' '
+    | pair <- count xs,
+      char <- if snd pair == 0 then " " else "*"
+  ]
