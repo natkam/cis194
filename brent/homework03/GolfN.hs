@@ -1,21 +1,17 @@
 module Golf where
 
 import Data.List (group, nub, sort, transpose)
+-- Run `cabal update` and `cabal install --lib MissingH` to install Utils!
+import Data.List.Utils (countElem, join)
 
---import Data.List.Unique (count)
---import Data.Map (fromListWith, toList)
-
+{- Ex. 1: Hopscotch -}
 skips :: [a] -> [[a]]
 skips xs = concatMap (getEveryNth xs) [1 .. (length xs)]
 
 getEveryNth :: [a] -> Int -> [[a]]
-getEveryNth xs n = [(map snd . filter (\(x, y) -> mod x n == 0) . zip [1 ..]) xs]
-
--- This function's body is pasted into the list comp in `skips'`. I'm
--- leaving it here for the sake of clarity; it does exactly the same as
--- `getEveryNth`, but I find the nested list comprehension unreadable.
-getEveryNth' :: [a] -> Int -> [a]
-getEveryNth' xs n = concat [[y] | (x, y) <- zip [1 ..] xs, mod x n == 0]
+getEveryNth xs n =
+  [ (map snd . filter (\(x, _) -> mod x n == 0) . zip [1 ..]) xs
+  ]
 
 skips' :: [a] -> [[a]]
 skips' xs =
@@ -31,6 +27,7 @@ skips'' xs =
     | n <- [1 .. length xs]
   ]
 
+{- Ex. 2: Local Maxima -}
 localMaxima :: [Integer] -> [Integer]
 localMaxima xs =
   [ xs !! i
@@ -38,35 +35,25 @@ localMaxima xs =
       xs !! (i - 1) < xs !! i && xs !! (i + 1) < xs !! i
   ]
 
-histogram :: [Integer] -> String
-histogram xs = foldr1 (\c acc -> acc ++ "\n" ++ c) (getLines xs) ++ "\n"
+{- Ex. 3: Histogram -}
 
+histogram :: [Integer] -> String
+-- would actually be shorter with "0123456789" and "=========="...
+histogram xs =
+  join
+    "\n"
+    (getRows xs ++ [replicate 10 '=', concatMap show [0 .. 9], ""])
+
+getRows :: [Integer] -> [String]
+getRows xs =
+  transpose
+    [ replicate ((maximum . count) xs - freq) ' ' ++ replicate freq '*'
+      | freq <- count xs
+    ]
+
+count :: [Integer] -> [Int]
+count xs = [countElem x xs | x <- [0 .. 9]]
+
+-- A previous attempt at getting the frequency of figures in the list
 --count' :: [Integer] -> [(Integer, Int)]
 --count' xs = zip ((sort . nub) xs) (map length ((group . sort) xs))
-
---count'' :: [Integer] -> [(Integer, Int)]
---count'' xs = toList (fromListWith (+) [(x, 1) | x <- xs])
-
---count' xs = count xs
-
-getLines :: [Integer] -> [String]
-getLines xs = concatMap show [0 .. 9] : replicate 10 '=' : (transpose . getCols) xs
-
--- Liczenie zerżnięte ze SO https://stackoverflow.com/q/19554984/4744341
---cnt :: Eq a => a -> [a] -> Int
---cnt x = length . filter (== x)
-
-count :: [Integer] -> [(Integer, Int)]
-count xs = [(x, (length . filter (== x)) xs) | x <- [0 .. 9]]
-
--- A helper function to get the max number of occurrences of any number
-maxCount :: [Integer] -> Int
-maxCount xs = maximum (map length ((group . sort) xs))
-
-getCols :: [Integer] -> [String]
-getCols xs =
-  [ replicate (snd pair) char
-      ++ replicate (maxCount xs - snd pair) ' '
-    | pair <- count xs,
-      char <- if snd pair == 0 then " " else "*"
-  ]
