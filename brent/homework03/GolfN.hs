@@ -36,13 +36,10 @@ localMaxima xs =
   ]
 
 {- Ex. 3: Histogram -}
-
 histogram :: [Integer] -> String
 -- would actually be shorter with "0123456789" and "=========="...
 histogram xs =
-  join
-    "\n"
-    (getRows xs ++ [replicate 10 '=', concatMap show [0 .. 9], ""])
+  unlines (getRows xs ++ [replicate 10 '=', concatMap show [0 .. 9]])
 
 getRows :: [Integer] -> [String]
 getRows xs =
