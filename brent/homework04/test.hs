@@ -1,13 +1,14 @@
 module TestWholemealN where
 {-
-1. Install the test libraries; the "--lib" flag makes them available in ghci.
-cabal install --lib HUnit
-cabal install --lib tasty
-cabal install --lib tasty-hunit
+1. Install the test libraries:
+cabal install HUnit
+cabal install tasty
+cabal install tasty-hunit
 2. Run the tests:
 runghc test.hs
 -}
 
+import Test.Tasty
 import Test.Tasty.HUnit
 import WholemealN
 
@@ -18,7 +19,7 @@ tests =
     "Homework 04 tests"
     [ testCase "fun1: Base case" $
         fun1' [] @?= fun1 [],
-      testCase "fun1: Only even numbers" $
+      testCase "fun1: Only odd numbers" $
         fun1' [7, 13, 3, 9] @?= fun1 [7, 13, 3, 9],
       testCase "fun1: Even and odd numbers" $
         fun1' [9, 4, 123, 55, 6] @?= fun1 [9, 4, 123, 55, 6],
