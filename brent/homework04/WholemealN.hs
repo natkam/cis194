@@ -47,6 +47,8 @@ insert newObj node@(Node n tl@(Node n' tl' obj' tr') obj tr@(Node n'' tl'' obj''
   | n' > n'' = Node n tl obj (insert newObj tr) -- to the right
   | otherwise = Node (n + 1) (insert newObj tl) obj tr -- to the left
 
+-- TODO: This does not compute the height correctly!
+
 foldTree :: [a] -> Tree a
 foldTree = foldr insert Leaf
 
@@ -62,13 +64,13 @@ xor = foldr xorBin False
 
 {- Ex. 3.2 -}
 map' :: (a -> b) -> [a] -> [b]
+-- A more elegant way would be (cf. Agata's solution!):
+-- map' f = foldr ((:) . f) []
 map' f = foldr (\x acc -> f x : acc) []
 
 {- Ex. 3.3 -}
--- myFoldl :: (a -> b -> a) -> a -> [b] -> a
--- myFoldl f base xs = ...
-
--- TODO: ex. 3.3!
+myFoldl :: (a -> b -> a) -> a -> [b] -> a
+myFoldl f base xs = foldr (flip f) base (reverse xs)
 
 {- Ex. 4: Finding primes -}
 --- Given an integer n, generate odd primes up to 2n + 2
