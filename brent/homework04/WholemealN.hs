@@ -43,9 +43,11 @@ insert :: a -> Tree a -> Tree a
 insert newObj Leaf = Node 0 Leaf newObj Leaf
 insert newObj (Node n Leaf obj tr) = Node (n + 1) (insert newObj Leaf) obj tr
 insert newObj (Node n tl obj Leaf) = Node n tl obj (insert newObj Leaf)
-insert newObj node@(Node n tl@(Node n' tl' obj' tr') obj tr@(Node n'' tl'' obj'' tr''))
-  | n' > n'' = Node n tl obj (insert newObj tr) -- to the right
-  | otherwise = Node (n + 1) (insert newObj tl) obj tr -- to the left
+insert
+  newObj
+  node@(Node n tl@(Node n' tl' obj' tr') obj tr@(Node n'' tl'' obj'' tr''))
+    | n' > n'' = Node n tl obj (insert newObj tr) -- to the right
+    | otherwise = Node (n + 1) (insert newObj tl) obj tr -- to the left
 
 -- TODO: This does not compute the height correctly!
 
@@ -74,10 +76,20 @@ myFoldl f base xs = foldr (flip f) base (reverse xs)
 
 {- Ex. 4: Finding primes -}
 --- Given an integer n, generate odd primes up to 2n + 2
--- sieveSundaram :: Integer -> [Integer]
--- sieveSundaram = ...
+sieveSundaram :: Integer -> [Integer]
+sieveSundaram n = map (\x -> 2 * x + 1) $ filter (notInInitSieve n) [1 .. n]
 
--- TODO: the Sieve of Sundaram
+initSieve :: Integer -> [Integer]
+initSieve n =
+  [ x
+    | x <- [1 .. n],
+      j <- [1 .. n],
+      i <- [1 .. j],
+      x == i + j + 2 * i * j
+  ]
 
-cartProd :: [a] -> [b] -> [(a, b)]
-cartProd xs ys = [(x, y) | x <- xs, y <- ys]
+notInInitSieve :: Integer -> Integer -> Bool
+notInInitSieve n = not . flip elem (initSieve n)
+
+-- cartProd :: [a] -> [b] -> [(a, b)]
+-- cartProd xs ys = [(x, y) | x <- xs, y <- ys]

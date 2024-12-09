@@ -58,5 +58,7 @@ tests =
           @?= map (|| False) [True, False, False],
       testCase "Ex. 3.3, myFoldl" $
         myFoldl (++) "foo" ["a", "b", "c"]
-          @?= foldl (++) "foo" ["a", "b", "c"]
+          @?= foldl (++) "foo" ["a", "b", "c"],
+      testCase "Ex. 4, sieve of Sundaram" $
+        sieveSundaram 20 @?= [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
     ]
