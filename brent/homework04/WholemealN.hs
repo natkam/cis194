@@ -77,10 +77,10 @@ myFoldl f base xs = foldr (flip f) base (reverse xs)
 {- Ex. 4: Finding primes -}
 --- Given an integer n, generate odd primes up to 2n + 2
 sieveSundaram :: Integer -> [Integer]
-sieveSundaram n = map (\x -> 2 * x + 1) $ filter (notInInitSieve n) [1 .. n]
+sieveSundaram = map (\x -> 2 * x + 1) . notInBase
 
-initSieve :: Integer -> [Integer]
-initSieve n =
+base :: Integer -> [Integer]
+base n =
   [ x
     | x <- [1 .. n],
       j <- [1 .. n],
@@ -88,8 +88,19 @@ initSieve n =
       x == i + j + 2 * i * j
   ]
 
-notInInitSieve :: Integer -> Integer -> Bool
-notInInitSieve n = not . flip elem (initSieve n)
+-- The following is for the sake of learning. It would be easier to use `\\`
+-- from Data.List: map (\x -> 2 * x + 1) ([1 .. n] \\ base n)
 
--- cartProd :: [a] -> [b] -> [(a, b)]
--- cartProd xs ys = [(x, y) | x <- xs, y <- ys]
+-- Stolen from https://stackoverflow.com/a/15030584; note: (.:) == (.) . (.)
+(.:) :: (c -> d) -> (a -> b -> c) -> a -> b -> d
+(f .: g) x y = f (g x y)
+
+notInBaseFilter :: Integer -> Integer -> Bool
+notInBaseFilter = not .: (flip elem . base)
+
+-- Alternative implementations:
+-- notInBaseFilter n = not . flip elem (base n)
+-- notInBaseFilter = (not .) . (flip elem . base)
+
+notInBase :: Integer -> [Integer]
+notInBase n = filter (notInBaseFilter n) [1 .. n]
