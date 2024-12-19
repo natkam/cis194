@@ -95,12 +95,13 @@ base n =
 (.:) :: (c -> d) -> (a -> b -> c) -> a -> b -> d
 (f .: g) x y = f (g x y)
 
-notInBaseFilter :: Integer -> Integer -> Bool
-notInBaseFilter = not .: (flip elem . base)
+-- This is *extremely* slow!
+--notInBaseFilter :: Integer -> Integer -> Bool
+--notInBaseFilter = not .: (flip elem . base)
 
--- Alternative implementations:
--- notInBaseFilter n = not . flip elem (base n)
--- notInBaseFilter = (not .) . (flip elem . base)
+-- Alternative implementations, which are btw WAAAAAY faster:
+--notInBaseFilter n = not . flip elem (base n)
+--notInBaseFilter = (not .) . (flip elem . base)
 
 notInBase :: Integer -> [Integer]
-notInBase n = filter (notInBaseFilter n) [1 .. n]
+notInBase n = filter (`notElem` base n) [1 .. n]
