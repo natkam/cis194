@@ -9,6 +9,6 @@ eval (Mul m n) = eval m * eval n
 eval (Add m n) = eval m + eval n
 
 evalStr :: String -> Maybe Integer
-evalStr s = case parseExp Lit Add Mul s of
-  Just expr -> Just (eval expr)
-  Nothing -> Nothing
+-- evalStr s = maybe Nothing (Just . eval) (parseExp Lit Add Mul s)
+-- evalStr s = parseExp Lit Add Mul s >>= Just . eval
+evalStr s = fmap eval (parseExp Lit Add Mul s)
