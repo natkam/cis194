@@ -4,16 +4,17 @@ module Calc where
 
 import ExprT
 import Parser (parseExp)
+import StackVM (Program, StackExp (Add, Mul, PushB, PushI), StackVal (IVal), stackVM)
 
 eval :: ExprT -> Integer
 eval (Lit n) = n
-eval (Mul m n) = eval m * eval n
-eval (Add m n) = eval m + eval n
+eval (ExprT.Mul m n) = eval m * eval n
+eval (ExprT.Add m n) = eval m + eval n
 
 evalStr :: String -> Maybe Integer
 -- evalStr s = maybe Nothing (Just . eval) (parseExp Lit Add Mul s)
 -- evalStr s = parseExp Lit Add Mul s >>= Just . eval
-evalStr s = fmap eval (parseExp Lit Add Mul s)
+evalStr s = fmap eval (parseExp Lit ExprT.Add ExprT.Mul s)
 
 reify :: ExprT -> ExprT
 reify = id
@@ -24,8 +25,8 @@ class Expr a where
 
 instance Expr ExprT where
   lit = Lit
-  add = Add
-  mul = Mul
+  add = ExprT.Add
+  mul = ExprT.Mul
 
 instance Expr Integer where
   lit = id
@@ -57,6 +58,18 @@ newtype Mod7 = Mod7 Integer deriving (Eq, Show)
 mod7ToInteger :: Mod7 -> Integer
 mod7ToInteger (Mod7 m) = m
 
+instance Expr Program where
+  lit i = [PushI i]
+  add p1 p2 = case (stackVM p1, stackVM p2) of
+    (Right (IVal i1), Right (IVal i2)) -> [PushI i1, PushI i2, StackVM.Add]
+    _ -> []
+  mul p1 p2 = case (stackVM p1, stackVM p2) of
+    (Right (IVal i1), Right (IVal i2)) -> [PushI i1, PushI i2, StackVM.Mul]
+    _ -> []
+
+compile :: String -> Maybe Program
+compile = parseExp lit add mul
+
 testExp :: Expr a => Maybe a
 testExp = parseExp lit add mul "(3 * -4) + 5"
 
@@ -67,6 +80,8 @@ testBool = testExp :: Maybe Bool
 testMM = testExp :: Maybe MinMax
 
 testSat = testExp :: Maybe Mod7
+
+testProg = testExp :: Maybe Program
 
 {-
 data Foo = F Int | G Char
