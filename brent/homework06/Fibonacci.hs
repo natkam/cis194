@@ -5,3 +5,6 @@ fib n
 
 fibs1 :: [Integer]
 fibs1 = [fib n | n <- [0 ..]]
+
+fibs2 :: [Integer]
+fibs2 = [0, 1] ++ [fibs2 !! (n - 1) + fibs2 !! (n - 2) | n <- [2 ..]]
