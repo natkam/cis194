@@ -60,4 +60,7 @@ instance Num (Stream Integer) where
   (*) (Cons a0 as') bs@(Cons b0 bs') = Cons (a0 * b0) (streamMap (* a0) bs' + as' * bs)
 
 instance Fractional (Stream Integer) where
-  (/) as@(Cons a0 as') bs@(Cons b0 bs') = Cons (a0 `div` b0) (streamMap (div b0) (as' - as / bs * bs'))
+  (/) as@(Cons a0 as') bs@(Cons b0 bs') = Cons (a0 `div` b0) (streamMap (`div` b0) (as' - as / bs * bs'))
+
+fibs3 :: Stream Integer
+fibs3 = x / (1 - x - x ^ 2)
