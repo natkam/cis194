@@ -56,11 +56,33 @@ x = Cons 0 (Cons 1 (streamRepeat 0))
 instance Num (Stream Integer) where
   fromInteger n = Cons n (streamRepeat 0)
   negate = streamMap (* (-1))
-  (+) (Cons a0 as') (Cons b0 bs') = Cons (a0 + b0) (as' + bs')
-  (*) (Cons a0 as') bs@(Cons b0 bs') = Cons (a0 * b0) (streamMap (* a0) bs' + as' * bs)
+  (Cons a0 as') + (Cons b0 bs') = Cons (a0 + b0) (as' + bs')
+  (Cons a0 as') * bs@(Cons b0 bs') =
+    Cons (a0 * b0) (streamMap (* a0) bs' + as' * bs)
 
 instance Fractional (Stream Integer) where
-  (/) as@(Cons a0 as') bs@(Cons b0 bs') = Cons (a0 `div` b0) (streamMap (`div` b0) (as' - as / bs * bs'))
+  (/) as@(Cons a0 as') bs@(Cons b0 bs') =
+    Cons (a0 `div` b0) (streamMap (`div` b0) (as' - as / bs * bs'))
 
 fibs3 :: Stream Integer
 fibs3 = x / (1 - x - x ^ 2)
+
+-- ex. 7
+
+newtype Matrix = Matrix ((Integer, Integer), (Integer, Integer))
+  deriving (Show, Eq)
+
+instance Num Matrix where
+  (Matrix ((a11, a12), (a21, a22))) * (Matrix ((b11, b12), (b21, b22))) =
+    Matrix
+      ( (a11 * b11 + a12 * b21, a11 * b12 + a12 * b22),
+        (a21 * b11 + a22 * b21, a21 * b12 + a22 * b22)
+      )
+
+getFstFst :: Matrix -> Integer
+getFstFst (Matrix ((a, _), _)) = a
+
+fib4 :: Integer -> Integer
+fib4 0 = 0
+fib4 1 = 1
+fib4 n = getFstFst $ Matrix ((1, 1), (1, 0)) ^ (n - 1)
