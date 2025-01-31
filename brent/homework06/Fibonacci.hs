@@ -45,9 +45,12 @@ nats = streamFromSeed (+ 1) 0
 interleaveStreams :: Stream a -> Stream a -> Stream a
 interleaveStreams (Cons x1 xs1) xs2 = Cons x1 (interleaveStreams xs2 xs1)
 
---TODO! (ex. 5.)
--- ruler :: Stream Integer
--- ruler = streamMap () (nats)
+-- ex. 5.
+foo :: Integer -> Stream Integer
+foo n = interleaveStreams (streamRepeat n) (foo (n + 1))
+
+ruler :: Stream Integer
+ruler = foo 0
 
 -- ex. 6
 x :: Stream Integer
