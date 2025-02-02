@@ -48,9 +48,7 @@ dropJ n jl | n <= 0 = jl
 dropJ _ Empty = Empty
 dropJ _ (Single _ _) = Empty
 dropJ n jl | n >= (getSize . size . tag) jl = Empty
-dropJ n jl@(Append _ jl1 jl2) -- = dropJ n jl1 +++ dropJ (n - lenl) jl2
-  | n < lenl = dropJ n jl1 +++ jl2
-  | otherwise = dropJ (n - lenl) jl2
+dropJ n jl@(Append _ jl1 jl2) = dropJ n jl1 +++ dropJ (n - lenl) jl2
   where
     lenl = (getSize . size . tag) jl1
 
@@ -59,8 +57,6 @@ takeJ n jl | n <= 0 = Empty
 takeJ _ Empty = Empty
 takeJ _ s@(Single _ _) = s
 takeJ n jl | n >= (getSize . size . tag) jl = jl
-takeJ n jl@(Append _ jl1 jl2) -- = takeJ n jl1 +++ takeJ (n - lenl) jl2
-  | n < lenl = takeJ n jl1
-  | otherwise = jl1 +++ takeJ (n - lenl) jl2
+takeJ n jl@(Append _ jl1 jl2) = takeJ n jl1 +++ takeJ (n - lenl) jl2
   where
     lenl = (getSize . size . tag) jl1
