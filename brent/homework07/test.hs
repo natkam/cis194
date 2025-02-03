@@ -1,6 +1,7 @@
 module TestJoinListN where
 
 import JoinListN
+import ScrabbleN (Score (Score))
 import Sized (Size (Size))
 import Test.Tasty (defaultMain, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
@@ -41,5 +42,8 @@ tests =
     "Homework 7 tests"
     [ testCase "Ex. 2, indexJ" $ and casesIndexJ @?= True,
       testCase "Ex. 2, dropJ" $ and casesDropJ @?= True,
-      testCase "Ex. 2, takeJ" $ and casesTakeJ @?= True
+      testCase "Ex. 2, takeJ" $ and casesTakeJ @?= True,
+      testCase "Ex. 3, scrabble-score-annotated JoinList" $
+        scoreLine "yay " +++ scoreLine "Haskell!"
+          @?= Append (Score 23) (Single (Score 9) "yay ") (Single (Score 14) "Haskell!")
     ]

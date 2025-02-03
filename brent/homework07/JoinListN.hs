@@ -1,5 +1,6 @@
 module JoinListN where
 
+import ScrabbleN (Score, scoreString)
 import Sized (Sized, getSize, size)
 
 -- data JoinListBasic a
@@ -60,3 +61,7 @@ takeJ n jl | n >= (getSize . size . tag) jl = jl
 takeJ n jl@(Append _ jl1 jl2) = takeJ n jl1 +++ takeJ (n - lenl) jl2
   where
     lenl = (getSize . size . tag) jl1
+
+scoreLine :: String -> JoinList Score String
+scoreLine "" = Empty
+scoreLine xs = Single (scoreString xs) xs
