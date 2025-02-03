@@ -3,6 +3,7 @@
 module JoinListN where
 
 import Buffer
+import Editor (editor, runEditor)
 import ScrabbleN (Score, getScore, scoreString)
 import Sized (Size (Size), Sized, getSize, size)
 
@@ -27,7 +28,7 @@ data JoinList m a
 tag :: Monoid m => JoinList m a -> m
 tag Empty = mempty
 tag (Single mval _) = mval
-tag (Append mval jl1 jl2) = mval
+tag (Append mval _ _) = mval
 
 (+++) :: Monoid m => JoinList m a -> JoinList m a -> JoinList m a
 jl1 +++ jl2 = Append (tag jl1 <> tag jl2) jl1 jl2
@@ -48,19 +49,21 @@ indexJ i (Append mval jl1 jl2)
     len = (getSize . size) mval
 
 dropJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
-dropJ n jl | n <= 0 = jl
+dropJ n jl
+  | n <= 0 = jl
+  | n >= (getSize . size . tag) jl = Empty
 dropJ _ Empty = Empty
 dropJ _ (Single _ _) = Empty
-dropJ n jl | n >= (getSize . size . tag) jl = Empty
 dropJ n jl@(Append _ jl1 jl2) = dropJ n jl1 +++ dropJ (n - lenl) jl2
   where
     lenl = (getSize . size . tag) jl1
 
 takeJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
-takeJ n jl | n <= 0 = Empty
+takeJ n jl
+  | n <= 0 = Empty
+  | n >= (getSize . size . tag) jl = jl
 takeJ _ Empty = Empty
 takeJ _ s@(Single _ _) = s
-takeJ n jl | n >= (getSize . size . tag) jl = jl
 takeJ n jl@(Append _ jl1 jl2) = takeJ n jl1 +++ takeJ (n - lenl) jl2
   where
     lenl = (getSize . size . tag) jl1
@@ -73,13 +76,10 @@ scoreLine xs = Single (scoreString xs) xs
 
 -- ex. 4
 
-jlBufToString :: JoinList (Score, Size) String -> String
-jlBufToString Empty = ""
-jlBufToString (Single _ val) = val
-jlBufToString (Append _ jl1 jl2) = jlBufToString jl1 ++ jlBufToString jl2
-
 instance Buffer (JoinList (Score, Size) String) where
-  toString = jlBufToString
+  toString Empty = ""
+  toString (Single _ val) = val
+  toString (Append _ jl1 jl2) = toString jl1 ++ toString jl2
 
   -- Question: Why doesn't mconcat work here?
   fromString "" = Empty
@@ -97,3 +97,11 @@ instance Buffer (JoinList (Score, Size) String) where
   numLines = getSize . size . tag
 
   value = getScore . fst . tag
+
+-- sampleInput :: JoinList (Score, Size) String
+-- sampleInput = fromString "Yay Haskell!"
+
+main :: IO ()
+main =
+  runEditor editor $
+    (fromString "Yay Haskell!" :: JoinList (Score, Size) String)
