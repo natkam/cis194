@@ -80,11 +80,20 @@ jlBufToString (Append _ jl1 jl2) = jlBufToString jl1 ++ jlBufToString jl2
 
 instance Buffer (JoinList (Score, Size) String) where
   toString = jlBufToString
-  fromString str = Single (scoreString str, Size 1) str
+
+  -- Question: Why doesn't mconcat work here?
+  fromString "" = Empty
+  fromString str = foldr1 (+++) $ map fromLine (lines str)
+    where
+      fromLine line = Single (scoreString line, Size 1) line
+
   line = indexJ
+
   replaceLine n str b
     | n < 0 || n >= numLines b = b
-    -- this doesn't work as expected :(
+    -- TODO: this doesn't work as expected :(
     | otherwise = takeJ n b +++ fromString str +++ dropJ (n + 1) b
+
   numLines = getSize . size . tag
+
   value = getScore . fst . tag

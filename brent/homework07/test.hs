@@ -30,10 +30,7 @@ jl = (l1 +++ (l2 +++ l3)) +++ l4
     l4 = Single (Size 1) 'h'
 
 bufJl :: JoinList (Score, Size) String
-bufJl = l1 +++ l2
-  where
-    l1 = fromString "yay "
-    l2 = fromString "Haskell!"
+bufJl = fromString "yay \nHaskell!"
 
 casesIndexJ :: [Bool]
 casesIndexJ = [indexJ i jl == (jlToList jl !!? i) | i <- [-5 .. 5]]
@@ -57,7 +54,11 @@ tests =
             (Single (Score 9) "yay ")
             (Single (Score 14) "Haskell!"),
       testCase "Ex. 4, JoinList from string" $
-        fromString "yay Haskell!" @?= Single (Score 23, Size 1) "yay Haskell!",
+        fromString "yay \nHaskell!"
+          @?= Append
+            (Score 23, Size 2)
+            (Single (Score 9, Size 1) "yay ")
+            (Single (Score 14, Size 1) "Haskell!"),
       testCase "Ex. 4, JoinList to string" $
         toString bufJl @?= "yay Haskell!",
       testCase "Ex. 4, JoinList get line" $ line 1 bufJl @?= Just "Haskell!",
