@@ -1,7 +1,10 @@
+{-# LANGUAGE FlexibleInstances #-}
+
 module JoinListN where
 
-import ScrabbleN (Score, scoreString)
-import Sized (Sized, getSize, size)
+import Buffer
+import ScrabbleN (Score, getScore, scoreString)
+import Sized (Size (Size), Sized, getSize, size)
 
 -- data JoinListBasic a
 --   = Empty
@@ -62,6 +65,26 @@ takeJ n jl@(Append _ jl1 jl2) = takeJ n jl1 +++ takeJ (n - lenl) jl2
   where
     lenl = (getSize . size . tag) jl1
 
+-- ex. 3
+
 scoreLine :: String -> JoinList Score String
 scoreLine "" = Empty
 scoreLine xs = Single (scoreString xs) xs
+
+-- ex. 4
+
+jlBufToString :: JoinList (Score, Size) String -> String
+jlBufToString Empty = ""
+jlBufToString (Single _ val) = val
+jlBufToString (Append _ jl1 jl2) = jlBufToString jl1 ++ jlBufToString jl2
+
+instance Buffer (JoinList (Score, Size) String) where
+  toString = jlBufToString
+  fromString str = Single (scoreString str, Size 1) str
+  line = indexJ
+  replaceLine n str b
+    | n < 0 || n >= numLines b = b
+    -- this doesn't work as expected :(
+    | otherwise = takeJ n b +++ fromString str +++ dropJ (n + 1) b
+  numLines = getSize . size . tag
+  value = getScore . fst . tag
