@@ -98,10 +98,8 @@ instance Buffer (JoinList (Score, Size) String) where
 
   value = getScore . fst . tag
 
--- sampleInput :: JoinList (Score, Size) String
--- sampleInput = fromString "Yay Haskell!"
+sampleInput :: JoinList (Score, Size) String
+sampleInput = fromString "Yay Haskell!"
 
 main :: IO ()
-main =
-  runEditor editor $
-    (fromString "Yay Haskell!" :: JoinList (Score, Size) String)
+main = runEditor editor sampleInput
