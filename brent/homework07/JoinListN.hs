@@ -3,7 +3,7 @@
 module JoinListN where
 
 import Buffer
-import Editor (editor, runEditor)
+-- import Editor (editor, runEditor)
 import ScrabbleN (Score, getScore, scoreString)
 import Sized (Size (Size), Sized, getSize, size)
 
@@ -96,5 +96,5 @@ instance Buffer (JoinList (Score, Size) String) where
 sampleInput :: JoinList (Score, Size) String
 sampleInput = fromString "Yay Haskell!"
 
-main :: IO ()
-main = runEditor editor sampleInput
+-- main :: IO ()
+-- main = runEditor editor sampleInput
