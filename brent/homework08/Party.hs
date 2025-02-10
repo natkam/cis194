@@ -35,3 +35,11 @@ nextLevel boss sublists =
 -- ex. 4
 maxFun :: Tree Employee -> GuestList
 maxFun = uncurry moreFun . treeFold nextLevel (GL [] 0, GL [] 0)
+
+-- ex. 5
+readTree :: String -> Tree Employee
+readTree = read
+
+main :: IO ()
+main = do
+  tree <- (readTree . readFile) "company.txt"
