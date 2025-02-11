@@ -18,30 +18,30 @@ moreFun :: GuestList -> GuestList -> GuestList
 moreFun = max
 
 -- ex. 2
--- TODO!
-treeFold :: (a -> [b] -> b) -> b -> Tree a -> b
-treeFold f z (Node _ []) = z
-treeFold f z (Node root sts) = f root (map (treeFold f z) sts)
+treeFold :: (a -> [b] -> b) -> Tree a -> b
+treeFold f (Node root sts) = f root (map (treeFold f) sts)
 
 -- ex. 3
 nextLevel :: Employee -> [(GuestList, GuestList)] -> (GuestList, GuestList)
-nextLevel boss [] = (GL [boss] (empFun boss), GL [] 0)
 nextLevel boss sublists =
-  ( foldr ((<>) . snd) (GL [boss] (empFun boss)) sublists,
-    foldr1 (<>) (map fst sublists)
-    -- take max (map fst sublists) (map snd sublists)
+  ( GL [boss] (empFun boss) <> mconcat withoutBosses,
+    maxFunSubs
   )
+  where
+    withBosses = map fst sublists
+    withoutBosses = map snd sublists
+    maxFunSubs = moreFun (mconcat withBosses) (mconcat withoutBosses)
 
 -- ex. 4
 maxFun :: Tree Employee -> GuestList
-maxFun = uncurry moreFun . treeFold nextLevel (GL [] 0, GL [] 0)
+maxFun = uncurry moreFun . treeFold nextLevel
 
 -- ex. 5
 readTree :: String -> Tree Employee
 readTree = read
 
 sortNames :: [Employee] -> [String]
-sortNames emps = sort $ map ((++ "\n") . empName) emps
+sortNames = sort . map ((++ "\n") . empName)
 
 printGL :: GuestList -> String
 printGL (GL guests totalFun) =
@@ -49,6 +49,9 @@ printGL (GL guests totalFun) =
     ++ concat (sortNames guests)
 
 main :: IO ()
-main = do
-  tree <- readFile "company.txt"
-  print $ (printGL . maxFun . readTree) tree
+main = readFile "company.txt" >>= putStrLn . printGL . maxFun . readTree
+
+-- Using a `<-` in a `do` block is equivalent to using a bind operator (>=).
+-- Or something like that. So the following also works within a `do` block:
+-- tree <- readFile "company.txt"
+-- print $ (printGL . maxFun . readTree) tree
