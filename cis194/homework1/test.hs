@@ -1,9 +1,10 @@
 module TestCardNumbers where
 
 {-
-1. Install the test libraries; the "--lib" flag makes them available in ghci.
-cabal install --lib HUnit
-cabal install --lib tasty
+1. Install the test libraries:
+cabal install HUnit
+cabal install tasty
+cabal install tasty-hunit
 -}
 
 --import Test.Tasty
